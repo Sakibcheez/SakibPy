@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ML Chatbot</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; }
+    #chatbox { width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 10px; }
+    #messages { height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    .user { color: blue; margin: 5px 0; }
+    .bot { color: green; margin: 5px 0; }
+    input { width: 80%; padding: 8px; }
+    button { padding: 8px; }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>ML Chatbot 🤖</h2>
+    <div id="messages"></div>
+    <input id="userInput" placeholder="Enter marks...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      let input = document.getElementById("userInput");
+      let message = input.value.trim();
+      if (!message) return;
+
+      // Show user message
+      let messages = document.getElementById("messages");
+      messages.innerHTML += `<div class='user'>You: ${message}</div>`;
+
+      // Send to backend
+      let response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: message })
+      });
+      let data = await response.json();
+
+      // Show bot reply
+      messages.innerHTML += `<div class='bot'>Bot: ${data.reply}</div>`;
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>
